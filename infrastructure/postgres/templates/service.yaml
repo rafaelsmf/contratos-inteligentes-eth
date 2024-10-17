@@ -1,15 +1,48 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "postgres.fullname" . }}
+  name: postgres-headless
   labels:
-    {{- include "postgres.labels" . | nindent 4 }}
+    app: postgres
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
+  clusterIP: None
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 5432
       protocol: TCP
-      name: http
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-master
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
   selector:
-    {{- include "postgres.selectorLabels" . | nindent 4 }}
+    app: postgres
+    apps.kubernetes.io/pod-index: "0"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-read-replica
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app: postgres
+    apps.kubernetes.io/pod-index:
