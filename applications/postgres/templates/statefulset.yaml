@@ -60,28 +60,9 @@ spec:
             {{- toYaml .Values.env | nindent 12 }}
           {{- if .Values.livenessProbe.enabled }}
           command:
-            - /bin/sh
+            - sh
             - -c
-            - |
-              echo "Verificando a presença de /etc/sql-files" && \
-              if [ -d "/etc/sql-files" ]; then \
-                echo "Criando diretório temporário para os arquivos SQL" && \
-                mkdir -p /tmp/sql-files && \
-                echo "Copiando arquivos SQL para o diretório temporário" && \
-                cp /etc/sql-files/* /tmp/sql-files/ && \
-                echo "Aguardando o PostgreSQL ficar disponível..." && \
-                until pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB" -h 127.0.0.1; do \
-                  echo "Aguardando..."; \
-                  sleep 2; \
-                done && \
-                for file in /tmp/sql-files/*.sql; do \
-                  echo "Executando o arquivo $file..." && \
-                  envsubst < "$file" | psql -U $POSTGRES_USER -d $POSTGRES_DB; \
-                done; \
-              else \
-                echo "/etc/sql-files não foi encontrado"; \
-                exit 1; \
-              fi
+            - echo "Hello from Postgres"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

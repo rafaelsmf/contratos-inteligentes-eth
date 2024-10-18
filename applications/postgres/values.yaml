@@ -7,7 +7,7 @@ replicaCount: 2
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: rafaelsousamf/postgres
+  repository: postgres
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
@@ -18,21 +18,12 @@ env:
   - name: POSTGRES_USER
     value: admin
   - name: POSTGRES_DB
-    value: postgres
+    value: crypto_ethereum
   - name: POSTGRES_PASSWORD
     valueFrom:
       secretKeyRef:
         name: db-credentials
         key: password  
-  - name: AIRFLOW_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: airflow-credentials
-        key: password
-  - name: AIRFLOW_DB
-    value: airflow
-  - name: AIRFLOW_USER
-    value: airflow
   
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -139,17 +130,17 @@ volumeMounts:
 - name: postgres-data
   mountPath: "/var/lib/postgresql/data"
   readOnly: false
-- name: sql-files
-  mountPath: "/etc/sql-files"
-  readOnly: false
+# - name: sql-files
+#   mountPath: "/etc/sql-files"
+#   readOnly: false
 
-volumes:
-- name: sql-files
-  configMap:
-    name: sql-files
+volumes: {}
+# - name: sql-files
+#   configMap:
+#     name: sql-files
 
-configMap:
-  name: sql-files
+configMap: {}
+#   name: sql-files
 
 # Configuring a PVC
 volumeClaimTemplates:
