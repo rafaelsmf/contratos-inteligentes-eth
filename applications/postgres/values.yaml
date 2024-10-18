@@ -1,0 +1,210 @@
+# Default values for postgres.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This will set to have 1 master and 1 read replica for the postgres instance 
+replicaCount: 2
+
+# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  repository: postgres
+  # This sets the pull policy for images.
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "16.4-alpine3.20"
+
+# Override environment variables
+env:
+  - name: POSTGRES_USER
+    value: admin
+  - name: POSTGRES_DB
+    value: postgres
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: password  
+  - name: AIRFLOW_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: airflow-credentials
+        key: password
+  - name: AIRFLOW_DB
+    value: airflow
+  - name: AIRFLOW_USER
+    value: airflow
+
+command:
+  - /bin/sh
+  - -c
+  - |
+    echo "Instalando o gettext para o envsubst..." && \
+    apk add --no-cache gettext && \
+    if [ $? -ne 0 ]; then \
+      echo "Erro ao instalar o gettext"; \
+      exit 1; \
+    fi && \
+    echo "Verificando a presença de /etc/sql-files" && \
+    if [ -d "/etc/sql-files" ]; then \
+      echo "Criando diretório temporário para os arquivos SQL" && \
+      mkdir -p /tmp/sql-files && \
+      echo "Copiando arquivos SQL para o diretório temporário" && \
+      cp /etc/sql-files/* /tmp/sql-files/ && \
+      for file in /tmp/sql-files/*.sql; do \
+        echo "Executando o arquivo $file..." && \
+        envsubst < "$file" | psql -U $POSTGRES_USER -d $POSTGRES_DB; \
+      done; \
+    else \
+      echo "/etc/sql-files não foi encontrado"; \
+      exit 1; \
+    fi
+  
+# This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+#This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ 
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels:
+  app: postgres
+
+podSecurityContext: {}
+  # fsGroup: 1000
+
+securityContext: {}
+  # readOnlyRootFilesystem: false
+  # runAsUser: 1000
+  # runAsGroup: 1000
+  # fsGroup: 1000
+
+# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: master-postgres.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: postgres-master
+              port:
+                number: 5432
+    - host: read-replica-postgres.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: postgres-read-replica
+              port:
+                number: 5432
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+service:
+  port: 5432
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe:
+  enabled: false
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: false
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+#This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+- name: postgres-data
+  mountPath: "/var/lib/postgresql/data"
+  readOnly: false
+- name: sql-files
+  mountPath: "/etc/sql-files"
+  readOnly: false
+
+volumes:
+- name: sql-files
+  configMap:
+    name: sql-files
+
+configMap:
+  name: sql-files
+
+# Configuring a PVC
+volumeClaimTemplates:
+  name: postgres-data
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: fast
+  resources:
+    requests:
+      storage: 1Gi
+
+# Setting up the storage class
+storageClass:
+  name: fast
+  provisioner: k8s.io/minikube-hostpath
+  parameters:
+    type: pd-ssd
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: 
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - postgres
+        topologyKey: kubernetes.io/hostname
