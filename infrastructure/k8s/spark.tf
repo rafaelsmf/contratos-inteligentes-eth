@@ -22,13 +22,3 @@ resource "helm_release" "spark" {
   namespace  = kubectl_manifest.spark_operator_namespace.name
   wait       = false
 }
-
-# Add Jupyterhub using Helm
-resource "helm_release" "jupyterhub" {
-  depends_on = [kubectl_manifest.spark_operator_namespace]
-  name       = "jupyterhub"
-  repository = "https://jupyterhub.github.io/helm-chart"
-  chart      = "jupyterhub"
-  namespace  = kubectl_manifest.spark_operator_namespace.name
-  wait       = false
-}

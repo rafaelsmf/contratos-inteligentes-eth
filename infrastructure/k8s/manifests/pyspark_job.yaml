@@ -1,0 +1,45 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: basic-job
+  namespace: default
+  labels:
+    app: spark
+spec:
+  monitoring:
+    exposeDriverMetrics: true
+    exposeExecutorMetrics: true
+    prometheus:
+      jmxExporterJar: "/prometheus/jmx_prometheus_javaagent-0.11.0.jar"
+      port: 8090
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: "marimpis/spark-k8s:latest"
+  imagePullPolicy: Always
+  mainApplicationFile: local:///opt/project/basic_job.py
+  sparkVersion: "3.4.1"
+  sparkConf:
+    spark.ui.port: "4045"
+    spark.metrics.conf: "/etc/metrics/conf/metrics.properties"
+    spark.driver.extraJavaOptions: "-javaagent:/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8090:/etc/metrics/conf/prometheus.yaml"
+    spark.executor.extraJavaOptions: "-javaagent:/prometheus/jmx_prometheus_javaagent-0.11.0.jar=8090:/etc/metrics/conf/prometheus.yaml"
+  restartPolicy:
+    type: OnFailure
+    onFailureRetries: 3
+    onFailureRetryInterval: 10
+    onSubmissionFailureRetries: 5
+    onSubmissionFailureRetryInterval: 20
+  driver:
+    cores: 1
+    coreLimit: "1200m"
+    memory: "512m"
+    labels:
+      version: 3.4.1
+    serviceAccount: spark
+  executor:
+    cores: 1
+    instances: 2
+    memory: "512m"
+    labels:
+      version: 3.4.1

@@ -1,0 +1,49 @@
+# Terraform
+.terraform/
+*.tfstate
+.tfstate.
+crash.log
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+.terraform.d/
+
+# Kubernetes (k8s)
+.kube/
+kubeconfig
+*.kubeconfig
+*.log
+
+# Python
+_pycache_/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+Pipfile.lock
+poetry.lock
+*.env
+.env
+.venv/
+.envrc
+*.pyo
+.mypy_cache/
+.pytest_cache/
+.pyre/
+.tox/
+.coverage
+htmlcov/
+.pyright/
+.mypy_cache/
+ipynb_checkpoints/
+.jupyter/
+MANIFEST
+
+# IDEs and editors
+.vscode/
