@@ -2,52 +2,59 @@ apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
   name: bigquery-to-postgres-job
-  namespace: spark-operator
+  namespace: processing
 spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "gcr.io/spark-operator/spark-py:v3.1.1"
-  mainApplicationFile: local:///scripts/contratos-inteligentes-eth/jobs/bigquery_to_postgres.py
-  sparkVersion: "3.1.1"
+  image: "jupyter/pyspark-notebook:spark-3.5.0"
+  mainApplicationFile: local:///scripts/contratos-inteligentes-etch/jobs/bigquery_to_postgres.py
+  sparkVersion: "3.5.0"
   restartPolicy:
     type: Never
-  hadoopConf:
-    fs.gs.impl: com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem
-    google.cloud.auth.service.account.enable: "true"
-    google.cloud.auth.service.account.json.keyfile: "/etc/secrets/gcp-credentials.json"
+  # hadoopConf:
+  #   fs.gs.impl: com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem
+  #   google.cloud.auth.service.account.enable: "true"
+  #   google.cloud.auth.service.account.json.keyfile: "/etc/secrets/gcp-credentials.json"
   driver:
     cores: 1
-    coreLimit: "500m"
-    memory: "512Mi"
-    serviceAccount: svc-spark-operator
-    volumeMounts:
-      - name: scripts
-        mountPath: /scripts
-      - name: git-secret
-        mountPath: /etc/git-secret
-        readOnly: true
-    initContainers:
-      - name: git-sync
-        image: "k8s.gcr.io/git-sync/git-sync:v3.6.1"
-        env:
-          - name: GIT_SYNC_REPO
-            value: "https://github.com/rafaelsmf/contratos-inteligentes-eth.git"
-          - name: GIT_SYNC_BRANCH
-            value: "develop"
-          - name: GIT_SYNC_ROOT
-            value: "/scripts"
-          - name: GIT_SYNC_ONE_TIME
-            value: "true"
+    coreLimit: "200m"
+    memory: "200Mi"
+    labels:
+      version: 3.1.1
+    serviceAccount: spark
+    # volumeMounts:
+    #   - name: scripts
+    #     mountPath: /scripts
+    #   - name: git-secret
+    #     mountPath: /etc/git-secret
+    #     readOnly: true
+    # initContainers:
+    #   - name: git-sync
+    #     image: "k8s.gcr.io/git-sync/git-sync:v3.6.1"
+    #     imagePullPolicy: Always
+    #     env: 
+    #     - name: GIT_SYNC_REPO
+    #       value: "https://github.com/rafaelsmf/contratos-inteligentes-eth.git"
+    #     - name: GIT_SYNC_BRANCH
+    #       value: "develop"
+    #     - name: GIT_SYNC_ROOT
+    #       value: /scripts
+    #     - name: GIT_SYNC_DEST
+    #       value: "develop"
+    #     - name: GIT_SYNC_ONE_TIME
+    #       value: "true"
+    #     - name: GIT_SYNC_USERNAME
+    #       value: Z2l0LXN5bmMK
+    #     - name: GIT_SYNC_PASSWORD
+    #       value: Z2l0aHViX3BhdF8xMUFKU0xaNkkwYk1pMllwTkh2Z1E4X2dJNkF4OVU1ckpPZXNWSDlMaENEalN3VEVIME5wSzRiQXlqdHh0RlU4YXFRNVNaSk1GSUYwVmxZRHNpCg==
   executor:
     cores: 1
-    coreLimit: "500m"
-    instances: 2
-    memory: "512Mi"
-    serviceAccount: svc-spark-operator
-  volumes:
-    - name: scripts
-      emptyDir: {}
-    - name: git-secret
-      secret:
-        secretName: gcp-credentials
+    instances: 1
+    memory: "200Mi"
+    labels:
+      version: 3.1.1
+  # volumes:
+  #   - name: gcp-credentials
+  #     secret:
+  #       secretName: gcp-credentials 
