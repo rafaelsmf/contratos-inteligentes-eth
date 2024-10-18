@@ -7,7 +7,7 @@ replicaCount: 2
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: postgres
+  repository: rafaelsousamf/postgres
   # This sets the pull policy for images.
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
@@ -33,31 +33,6 @@ env:
     value: airflow
   - name: AIRFLOW_USER
     value: airflow
-
-command:
-  - /bin/sh
-  - -c
-  - |
-    echo "Instalando o gettext para o envsubst..." && \
-    apk add --no-cache gettext && \
-    if [ $? -ne 0 ]; then \
-      echo "Erro ao instalar o gettext"; \
-      exit 1; \
-    fi && \
-    echo "Verificando a presença de /etc/sql-files" && \
-    if [ -d "/etc/sql-files" ]; then \
-      echo "Criando diretório temporário para os arquivos SQL" && \
-      mkdir -p /tmp/sql-files && \
-      echo "Copiando arquivos SQL para o diretório temporário" && \
-      cp /etc/sql-files/* /tmp/sql-files/ && \
-      for file in /tmp/sql-files/*.sql; do \
-        echo "Executando o arquivo $file..." && \
-        envsubst < "$file" | psql -U $POSTGRES_USER -d $POSTGRES_DB; \
-      done; \
-    else \
-      echo "/etc/sql-files não foi encontrado"; \
-      exit 1; \
-    fi
   
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
