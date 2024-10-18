@@ -10,5 +10,6 @@ resource "helm_release" "airflow" {
   repository = "https://airflow.apache.org"
   chart      = "airflow"
   namespace  = kubectl_manifest.airflow_namespace.name
+  values = [file("../../applications/airflow/values.yaml")]
   wait       = false
 }
