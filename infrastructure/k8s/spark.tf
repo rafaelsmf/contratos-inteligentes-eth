@@ -25,5 +25,6 @@ resource "helm_release" "spark" {
   repository = "https://kubeflow.github.io/spark-operator"
   chart      = "spark-operator"
   namespace  = kubectl_manifest.spark_operator_namespace.name
+  values = [file("../../applications/spark-operator/values.yaml")]
   wait       = false
 }
