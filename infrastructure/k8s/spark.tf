@@ -13,9 +13,14 @@ resource "kubectl_manifest" "spark_operator_clusterrolebinding" {
   yaml_body = file("./manifests/spark-operator-clusterrolebinding.yaml")
 }
 
+# GCP Secrets
+resource "kubectl_manifest" "gcp_secrets" {
+  yaml_body = file("./manifests/gcp-secrets.yaml")
+}
+
 # Add Spark-Operator using Helm
 resource "helm_release" "spark" {
-  depends_on = [kubectl_manifest.spark_operator_namespace, kubectl_manifest.spark_operator_serviceaccount, kubectl_manifest.spark_operator_clusterrolebinding]
+  depends_on = [kubectl_manifest.spark_operator_namespace, kubectl_manifest.spark_operator_serviceaccount, kubectl_manifest.spark_operator_clusterrolebinding, kubectl_manifest.gcp_secrets]
   name       = "spark"
   repository = "https://kubeflow.github.io/spark-operator"
   chart      = "spark-operator"
