@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: spark-role
+  name: crb-spark-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: edit
+  name: cluster-admin
 subjects:
   - kind: ServiceAccount
-    name: spark
+    name: spark-spark-operator-controller
     namespace: spark-operator

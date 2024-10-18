@@ -47,3 +47,5 @@ MANIFEST
 
 # IDEs and editors
 .vscode/
+infrastructure/k8s/terraform.tfstate
+infrastructure/k8s/terraform.tfstate

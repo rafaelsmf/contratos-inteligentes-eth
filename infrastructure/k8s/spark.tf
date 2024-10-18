@@ -8,8 +8,14 @@ resource "kubectl_manifest" "spark_operator_serviceaccount" {
   yaml_body = file("./manifests/spark-operator-serviceaccount.yaml")
 }
 
+# Spark ClusterRole
+resource "kubectl_manifest" "spark_operator_clusterrole" {
+  yaml_body = file("./manifests/spark-operator-clusterrole.yaml")
+}
+
 # Spark ClusterRoleBinding
 resource "kubectl_manifest" "spark_operator_clusterrolebinding" {
+  depends_on = [kubectl_manifest.spark_operator_clusterrole]
   yaml_body = file("./manifests/spark-operator-clusterrolebinding.yaml")
 }
 
