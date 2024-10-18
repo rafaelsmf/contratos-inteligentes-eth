@@ -8,14 +8,26 @@ data "kubectl_path_documents" "spark-service-account" {
   pattern = "${path.module}/manifests/spark-service-account.yaml"
 }
 
+resource "kubectl_manifest" "gcp-secrets" {
+  yaml_body = file("${path.module}/manifests/gcp-secrets.yaml")
+}
+
 resource "kubectl_manifest" "spark-service-account" {
+  depends_on = [
+    kubectl_manifest.spark-namespace,
+    kubectl_manifest.gcp-secrets
+  ]
+  count     = length(data.kubectl_path_documents.spark-service-account.documents)
+  yaml_body = element(data.kubectl_path_documents.spark-service-account.documents, count.index)
+}
+
+resource "kubectl_manifest" "gcp_secrets" {
   depends_on = [
     kubectl_manifest.spark-namespace
   ]
   count     = length(data.kubectl_path_documents.spark-service-account.documents)
   yaml_body = element(data.kubectl_path_documents.spark-service-account.documents, count.index)
 }
-
 
 # Add Spark-Operator using Helm
 resource "helm_release" "spark-operator" {
