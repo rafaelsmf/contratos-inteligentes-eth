@@ -16,6 +16,15 @@ spec:
   sparkVersion: "3.5.0"
   restartPolicy:
     type: Never
+  sparkConf:
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": "/tmp/spark-events"
+    "spark.executor.logs.rolling.maxRetainedFiles": "5"
+    "spark.executor.logs.rolling.strategy": "time"
+    "spark.executor.logs.rolling.time.interval": "daily"
+    "spark.sql.debug.maxToStringFields": "100"
+    "spark.ui.showConsoleProgress": "true"
+    "spark.executor.extraJavaOptions": "-Dlog4j.configuration=file:/opt/spark/conf/log4j.properties"
   hadoopConf:
     fs.gs.impl: com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem
     google.cloud.auth.service.account.enable: "true"
@@ -52,6 +61,8 @@ spec:
         - name: GIT_SYNC_DEST
           value: "develop"
         - name: GIT_SYNC_ONE_TIME
+          value: "true"
+        - name: GIT_SYNC_VERBOSE
           value: "true"
         - name: GIT_SYNC_USERNAME
           value: Z2l0LXN5bmMK
