@@ -7,7 +7,7 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "a3dataops/spark-py:v3.4.2-hadoop3"
+  image: "bitnami/spark:latest"
   mainApplicationFile: local:///scripts/develop/scripts/contratos-inteligentes-eth/jobs/bigquery_to_postgres.py
   arguments: 
     # - "{{ ds }}"
