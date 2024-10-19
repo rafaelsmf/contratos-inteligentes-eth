@@ -14,8 +14,8 @@ def create_spark_session():
         .config("spark.jars.packages", 
             "org.postgresql:postgresql:42.2.23,"
             "com.google.cloud.bigdataoss:gcs-connector:hadoop2-2.2.5,"
-            "com.google.cloud.spark:spark-bigquery-with-dependencies_2.12:0.41.0")
-        .config("spark.sql.execution.arrow.enabled", "true")
+            "com.google.cloud.spark:spark-bigquery_2.12:0.17.2")
+        .config("spark.sql.execution.arrow.pyspark.enabled", "true")
         .getOrCreate()
     )
 
