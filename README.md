@@ -27,7 +27,7 @@ Instalar as seguintes ferramentas na máquina local:
 
 Clone o repositório do projeto:
 ```bash
-https://github.com/rafaelsmf/contratos-inteligentes-eth.git
+git clone -v --no-checkout -b develop https://github.com/rafaelsmf/contratos-inteligentes-eth.git
 ```
 
 ### 3. Deploy do Cluster Minikube
