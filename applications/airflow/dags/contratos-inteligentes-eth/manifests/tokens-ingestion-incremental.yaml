@@ -10,8 +10,7 @@ spec:
   image: "bitnami/spark:latest"
   mainApplicationFile: local:///scripts/develop/scripts/contratos-inteligentes-eth/jobs/bigquery_to_postgres.py
   arguments: 
-    # - "{{ ds }}"
-    - "2024-10-18"
+    - "{{ ds }}"
   timeToLiveSeconds: 60
   sparkVersion: "3.5.0"
   restartPolicy:

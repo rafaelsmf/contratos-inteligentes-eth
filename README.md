@@ -12,6 +12,8 @@ Este projeto tem como objetivo construir uma solução de processamento de dados
 - **VS Code/OpenLens/DBeaver**: Ferramentas de desenvolvimento com extensões para facilitar o gerenciamento de Kubernetes e edição de código.
 - **Airflow**: Para orquestrar o pipeline de dados.
 - **Spark**: Para processar dados com alta performance.
+- **Google BigQuery**: Fonte de dados utilizada (dataset público).
+- **GitHub**: Repositório onde os DAGs e scripts de processamento são versionados.
 - **PostgreSQL**: Banco de dados para persistir os dados processados.
 
 ## Passo a Passo para Configuração e Deploy
@@ -59,3 +61,41 @@ terraform init
 terraform plan
 terraform apply
 ```
+
+### 6. Comentários
+
+# Acessos
+
+-- acesso ao airflow
+admin
+admin
+
+-- acesso ao jupyterhub
+jovyan
+admin
+
+# DAG do Airflow responsável pela orquestração
+![alt text](image-1.png)
+
+1. Extração: O Spark conecta-se ao BigQuery e faz a leitura dos dados do dataset público de transações de Ethereum.
+2. Processamento: O Spark realiza o processamento, aplicando filtros baseados na data da execução (D-1) para realizar um processamento incremental.
+3. Armazenamento: O Spark grava os dados processados no banco de dados PostgreSQL em execução no Minikube.
+
+# Desafios Encontrados
+
+1. Configuração do Spark Operator
+- A configuração inicial do Spark Operator no Minikube apresentou desafios, principalmente ao lidar com incompatibilidades na versão do jar do conector do BigQuery. Utilizando o Pyspark notebook, foi possível validar a lógica da DAG no Airflow e assegurar a execução correta do script.
+2. Autenticação com o BigQuery
+- As credenciais de autenticação foram armazenadas como secrets no Kubernetes, garantindo segurança e fácil integração com o BigQuery.
+3. Orquestração com Airflow
+- O Airflow foi configurado com Git-Sync para garantir a sincronização contínua das DAGs diretamente do GitHub.
+4. Gravação no PostgreSQL
+- Para definir corretamente o IP de conexão ao banco de dados PostgreSQL, utilize o comando:
+```bash
+kubectl get svc -n postgres
+```
+- Exemplo de IP de conexão: postgresql://10.109.6.155:5432/crypto_ethereum
+![alt text](image-2.png)
+
+- Amostra de dados salvos no Postgres:
+![alt text](image-3.png)

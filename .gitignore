@@ -49,3 +49,6 @@ MANIFEST
 .vscode/
 infrastructure/k8s/terraform.tfstate
 infrastructure/k8s/terraform.tfstate.backup
+infrastructure/k8s/terraform.tfstate
+infrastructure/k8s/terraform.tfstate.backup
+infrastructure/minikube/terraform.tfstate
