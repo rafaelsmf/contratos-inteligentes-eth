@@ -8,7 +8,10 @@ spec:
   pythonVersion: "3"
   mode: cluster
   image: "a3dataops/spark-py:v3.4.2-hadoop3"
-  mainApplicationFile: local:///scripts/contratos-inteligentes-eth/jobs/bigquery_to_postgres.py
+  mainApplicationFile: local:///scripts/develop/scripts/contratos-inteligentes-eth/jobs/bigquery_to_postgres.py
+  arguments: 
+    # - "{{ ds }}"
+    - "2024-10-18"
   timeToLiveSeconds: 60
   sparkVersion: "3.1.1"
   restartPolicy:
@@ -23,9 +26,6 @@ spec:
     coreLimit: "1000m"    
     memory: "2000m"
     serviceAccount: spark
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
     volumeMounts:
       - name: scripts
         mountPath: /scripts
@@ -36,6 +36,12 @@ spec:
       - name: git-sync
         image: "k8s.gcr.io/git-sync/git-sync:v3.6.1"
         imagePullPolicy: Always
+        volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+        - name: git-secret
+          mountPath: /etc/git-secret
+          readOnly: true
         env: 
         - name: GIT_SYNC_REPO
           value: "https://github.com/rafaelsmf/contratos-inteligentes-eth.git"
