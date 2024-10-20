@@ -87,7 +87,7 @@ def main(execution_date):
     # Leitura dos dados do BigQuery
     print("Loading tokens data...")
     bigquery_table = "bigquery-public-data.crypto_ethereum.tokens"
-    df = read_bigquery_data(spark, project_id, bigquery_table)
+    df = read_bigquery_data(spark, bigquery_table)
 
     # Filtrar os dados do dia anterior
     print("Filtering data...")
