@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
 import sys
 from datetime import datetime
+from loguru import logging
 
 
 project_id = "desafio-stone-439013"
@@ -14,7 +15,6 @@ def create_spark_session():
     spark = (
         SparkSession.builder
         .appName('BigQuery Crypto Ethereum')
-        .config('spark.jars.packages', 'org.postgresql:postgresql:42.2.23')
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
         .config('parentProject', project_id)
         .getOrCreate()
@@ -74,7 +74,7 @@ def main(execution_date):
     :param execution_date: Data de execução da DAG (D-1)
     """
     # Criar a sessão Spark
-    print("Getting spark session...")
+    logging.info("Getting spark session...")
     spark = create_spark_session()
 
     # Convertendo a data de execução para datetime
@@ -85,12 +85,12 @@ def main(execution_date):
     end_date = execution_date_dt.strftime('%Y-%m-%d 23:59:59')
 
     # Leitura dos dados do BigQuery
-    print("Loading tokens data...")
+    logging.info("Loading tokens data...")
     bigquery_table = "bigquery-public-data.crypto_ethereum.tokens"
     df = read_bigquery_data(spark, bigquery_table)
 
     # Filtrar os dados do dia anterior
-    print("Filtering data...")
+    logging.info("Filtering data...")
     df_filtered = filter_data_by_date(df, start_date, end_date)
 
     # Conexão com PostgreSQL
@@ -102,19 +102,19 @@ def main(execution_date):
     }
 
     # Escrever os dados no PostgreSQL
-    print("Writing to postgres...")
+    logging.info("Writing to postgres...")
     write_to_postgres(df_filtered, postgres_url, "public.crypto_tokens", postgres_properties)
 
     # Encerrar a sessão Spark
-    print("Stopping spark...")
+    logging.info("Stopping spark...")
     spark.stop()
-    print("Job finished.")
+    logging.info("Job finished.")
 
 
 if __name__ == "__main__":
     # Leitura do argumento de execução
     execution_date = sys.argv[1]
-    print(f"Execution date: {execution_date}")
+    logging.info(f"Execution date: {execution_date}")
     
     # Executar o fluxo principal
     main(execution_date)
