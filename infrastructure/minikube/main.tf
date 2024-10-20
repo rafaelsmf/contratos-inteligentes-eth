@@ -1,7 +1,7 @@
 resource "null_resource" "minikube_cluster" {
 
   provisioner "local-exec" {
-    command = "minikube start -p local-k8s --memory=10g --cpus=5"
+    command = "minikube start -p local-k8s --memory=10g --cpus=6"
   }
 
   provisioner "local-exec" {

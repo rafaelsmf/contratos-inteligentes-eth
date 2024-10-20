@@ -114,7 +114,7 @@ def main(execution_date):
 if __name__ == "__main__":
     # Leitura do argumento de execução
     execution_date = sys.argv[1]
-    print(f"Execution date: {execution_date}")
+    print(f"Processing data for day: {execution_date}")
     
     # Executar o fluxo principal
     main(execution_date)
