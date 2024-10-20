@@ -12,8 +12,9 @@ def create_spark_session():
     spark = (
         SparkSession.builder
         .appName('BigQuery Crypto Ethereum')
-        .config('spark.jars.packages', 'org.postgresql:postgresql:42.2.23') \
+        .config('spark.jars.packages', 'org.postgresql:postgresql:42.2.23')
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
+        .option("materializationDataset", "materializationDataset")
         .getOrCreate()
     )
 

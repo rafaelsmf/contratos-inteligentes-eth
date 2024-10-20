@@ -20,23 +20,20 @@ spec:
   hadoopConf:
     fs.gs.project.id: "desafio-stone-439013"
     fs.gs.impl: com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem
-    google.cloud.auth.service.account.enable: "true"
-    google.cloud.auth.service.account.json.keyfile: "/etc/secrets/gcp-credentials.json"
+    # google.cloud.auth.service.account.enable: "true"
+    # google.cloud.auth.service.account.json.keyfile: "/etc/secrets/gcp-credentials.json"
   driver:
     cores: 1
     coreRequest: '1000m'
     coreLimit: "1000m"    
     memory: "2000m"
     serviceAccount: spark
-    secrets:
-      - name: "gcp-credentials"
-        path: "/etc/secrets/gcp-credentials"
-        secretType: GCPServiceAccount
-    envVars:
-      GCS_PROJECT_ID: "desafio-stone-439013"
     volumeMounts:
       - name: scripts
         mountPath: /scripts
+      - name: gcp-credentials
+        mountPath: /etc/secrets/gcp-credentials
+        readOnly: true
     initContainers:
       - name: git-sync
         image: "k8s.gcr.io/git-sync/git-sync:v3.6.1"
@@ -44,7 +41,14 @@ spec:
         volumeMounts:
         - name: scripts
           mountPath: /scripts
+        - name: gcp-credentials
+          mountPath: /etc/secrets/gcp-credentials
+          readOnly: true
         env: 
+        - name: GCS_PROJECT_ID
+          value: "desafio-stone-439013"
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/etc/secrets/gcp-credentials/gcp-credentials.json"
         - name: GIT_SYNC_REPO
           value: "https://github.com/rafaelsmf/contratos-inteligentes-eth.git"
         - name: GIT_SYNC_BRANCH
@@ -71,12 +75,12 @@ spec:
     securityContext:
       runAsUser: 1000
       runAsGroup: 1000
-    secrets:
-      - name: "gcp-credentials"
-        path: "/etc/secrets/gcp-credentials"
-        secretType: GCPServiceAccount
     envVars:
       GCS_PROJECT_ID: "desafio-stone-439013"
+      GOOGLE_APPLICATION_CREDENTIALS: "/etc/secrets/gcp-credentials/gcp-credentials.json"
   volumes:
     - name: scripts
       emptyDir: {}
+    - name: gcp-credentials
+      secret:
+        secretName: gcp-credentials
