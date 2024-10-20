@@ -15,7 +15,7 @@ def create_spark_session():
         SparkSession.builder
         .appName('BigQuery Crypto Ethereum')
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
-        .config("spark.jars", "/opt/spark/jars")
+        .config("spark.jars", "/opt/spark/jars/postgresql-42.7.4.jar,/opt/spark/jars/spark-bigquery-with-dependencies_2.12-0.40.0.jar")
         .config('parentProject', project_id)
         .getOrCreate()
     )
