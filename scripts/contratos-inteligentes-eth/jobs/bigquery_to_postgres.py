@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
 import sys
 from datetime import datetime
+import os
 
 
 def create_spark_session():
@@ -11,7 +12,7 @@ def create_spark_session():
     spark = (
         SparkSession.builder
         .appName('BigQuery Crypto Ethereum')
-        .config('spark.jars.packages', 'com.google.cloud.spark:spark-3.5-bigquery:0.39.0,org.postgresql:postgresql:42.2.23') \
+        .config('spark.jars.packages', 'org.postgresql:postgresql:42.2.23') \
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
         .getOrCreate()
     )
@@ -30,7 +31,7 @@ def read_bigquery_data(spark, project_id, table):
     """
     return (
         spark.read
-        .format("com.google.cloud.spark.bigquery")
+        .format("bigquery")
         .option("project", project_id)
         .option("table", table)
         .load()
