@@ -2,7 +2,9 @@ from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
 import sys
 from datetime import datetime
-import os
+
+
+project_id = "desafio-stone-439013"
 
 
 def create_spark_session():
@@ -14,15 +16,14 @@ def create_spark_session():
         .appName('BigQuery Crypto Ethereum')
         .config('spark.jars.packages', 'org.postgresql:postgresql:42.2.23')
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
-        .config("viewsEnabled","true")
-        .config("materializationDataset","<dataset>")
+        .config('parentProject', project_id)
         .getOrCreate()
     )
 
     return spark
 
 
-def read_bigquery_data(spark, project_id, table):
+def read_bigquery_data(spark, table):
     """
     Lê os dados do BigQuery.
     
@@ -34,7 +35,7 @@ def read_bigquery_data(spark, project_id, table):
     return (
         spark.read
         .format("bigquery")
-        .option("project", project_id)
+        .option("parentProject", project_id) 
         .option("table", table)
         .load()
     )
@@ -85,7 +86,6 @@ def main(execution_date):
 
     # Leitura dos dados do BigQuery
     print("Loading tokens data...")
-    project_id = "desafio-stone-439013"
     bigquery_table = "bigquery-public-data.crypto_ethereum.tokens"
     df = read_bigquery_data(spark, project_id, bigquery_table)
 
