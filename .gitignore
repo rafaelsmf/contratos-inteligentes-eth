@@ -54,3 +54,4 @@ infrastructure/k8s/terraform.tfstate.backup
 infrastructure/minikube/terraform.tfstate
 infrastructure/minikube/.terraform.tfstate.lock.info
 infrastructure/k8s/.terraform.lock.hcl
+infrastructure/minikube/terraform.tfstate.backup
