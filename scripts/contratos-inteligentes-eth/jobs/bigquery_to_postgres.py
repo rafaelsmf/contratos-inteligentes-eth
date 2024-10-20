@@ -94,7 +94,7 @@ def main(execution_date):
     df_filtered = filter_data_by_date(df, start_date, end_date)
 
     # Conexão com PostgreSQL
-    postgres_url = "jdbc:postgresql://master-postgres.local/crypto_ethereum"
+    postgres_url = "jdbc:postgresql://postgres-master.postgres.svc.cluster.local:5432/crypto_ethereum"
     postgres_properties = {
         "user": "admin",
         "password": "admin",
