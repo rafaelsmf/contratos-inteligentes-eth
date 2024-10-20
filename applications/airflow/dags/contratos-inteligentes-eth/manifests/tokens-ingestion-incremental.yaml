@@ -1,4 +1,4 @@
-apiVersion: "sparkoperator.k8s.io/v1beta2"
+apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 metadata:
   name: bigquery-to-postgres-job
@@ -7,12 +7,14 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "bitnami/spark:latest"
+  image: spark:3.5.3
+  imagePullPolicy: IfNotPresent
   mainApplicationFile: local:///scripts/develop/scripts/contratos-inteligentes-eth/jobs/bigquery_to_postgres.py
   arguments: 
-    - "{{ ds }}"
+    # - "{{ ds }}"
+    - "2024-10-20"
   timeToLiveSeconds: 60
-  sparkVersion: "3.5.0"
+  sparkVersion: "3.5.3"
   restartPolicy:
     type: Never
   hadoopConf:
