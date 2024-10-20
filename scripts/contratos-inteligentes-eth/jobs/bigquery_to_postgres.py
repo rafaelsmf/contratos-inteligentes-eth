@@ -2,7 +2,6 @@ from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
 import sys
 from datetime import datetime
-from loguru import logger
 
 
 def create_spark_session():
@@ -106,7 +105,7 @@ def main(execution_date):
 if __name__ == "__main__":
     # Leitura do argumento de execução
     execution_date = sys.argv[1]
-    logger.info(f"Execution date: {execution_date}")
+    print(f"Execution date: {execution_date}")
     
     # Executar o fluxo principal
     main(execution_date)
