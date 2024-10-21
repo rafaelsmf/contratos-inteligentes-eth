@@ -62,6 +62,8 @@ terraform plan
 terraform apply
 ```
 
+# kubectl port-forward pods/postgres-0 5432:5432 -n postgres
+
 ### 6. Comentários
 
 # Acessos

@@ -93,17 +93,21 @@ def main(execution_date):
     print("Filtering data...")
     df_filtered = filter_data_by_date(df, start_date, end_date)
 
-    # Conexão com PostgreSQL
-    postgres_url = "jdbc:postgresql://postgres-master.postgres.svc.cluster.local:5432/crypto_ethereum"
-    postgres_properties = {
-        "user": "admin",
-        "password": "admin",
-        "driver": "org.postgresql.Driver"
-    }
+    if df_filtered.count() > 0:
+        # Conexão com PostgreSQL
+        postgres_url = "jdbc:postgresql://postgres-master.postgres.svc.cluster.local:5432/crypto_ethereum"
+        postgres_properties = {
+            "user": "admin",
+            "password": "admin",
+            "driver": "org.postgresql.Driver"
+        }
 
-    # Escrever os dados no PostgreSQL
-    print("Writing to postgres...")
-    write_to_postgres(df_filtered, postgres_url, "public.crypto_tokens", postgres_properties)
+        # Escrever os dados no PostgreSQL
+        print("Writing to postgres...")
+        write_to_postgres(df_filtered, postgres_url, "public.crypto_tokens", postgres_properties)
+
+    else:
+        print(f"There is no data for period between {start_date} and {end_date}")
 
     # Encerrar a sessão Spark
     print("Stopping spark...")

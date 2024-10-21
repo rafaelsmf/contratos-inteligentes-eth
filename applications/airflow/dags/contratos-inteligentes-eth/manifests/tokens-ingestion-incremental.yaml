@@ -11,8 +11,7 @@ spec:
   imagePullPolicy: IfNotPresent
   mainApplicationFile: local:///scripts/develop/scripts/contratos-inteligentes-eth/jobs/bigquery_to_postgres.py
   arguments: 
-    # - "{{ ds }}"
-    - "2024-10-20"
+    - "{{ ds }}"
   timeToLiveSeconds: 60
   sparkVersion: "3.5.3"
   restartPolicy:
@@ -67,8 +66,8 @@ spec:
         - name: GIT_SYNC_PASSWORD
           value: Z2l0aHViX3BhdF8xMUFKU0xaNkkwYk1pMllwTkh2Z1E4X2dJNkF4OVU1ckpPZXNWSDlMaENEalN3VEVIME5wSzRiQXlqdHh0RlU4YXFRNVNaSk1GSUYwVmxZRHNpCg==
   executor:
-    cores: 2
-    coreRequest: '1000m'
+    cores: 1
+    coreRequest: '500m'
     coreLimit: "1000m"    
     instances: 1
     memory: "500m"
