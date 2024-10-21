@@ -146,11 +146,11 @@ controller:
   # 'failed to run spark-submit for SparkApplication [...]: signal: killed' - when this happens, you may want to increase memory limits.
   resources:
     limits:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: 300m
+      memory: 256Mi
     requests:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: 100m
+      memory: 128Mi
 
   # -- Security context for controller containers.
   securityContext: {}
@@ -289,11 +289,11 @@ webhook:
   # -- Pod resource requests and limits for webhook pods.
   resources:
     limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
       cpu: 300m
-      memory: 500Mi
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
   # -- Security context for webhook containers.
   securityContext: {} 

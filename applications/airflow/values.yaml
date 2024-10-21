@@ -651,8 +651,8 @@ workers:
     enabled: false
     resources:
      limits:
-      cpu: 1000m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
      requests:
       cpu: 100m
       memory: 128Mi
@@ -667,8 +667,8 @@ workers:
     enabled: false
     resources:
      limits:
-      cpu: 1000m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
      requests:
       cpu: 100m
       memory: 128Mi
@@ -676,7 +676,7 @@ workers:
 
   resources:
    limits:
-    cpu: 1000m
+    cpu: 300m
     memory: 256Mi
    requests:
     cpu: 100m
@@ -757,8 +757,8 @@ workers:
     retentionDays: 15
     resources:
      limits:
-      cpu: 1000m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
      requests:
       cpu: 100m
       memory: 128Mi
@@ -825,7 +825,7 @@ scheduler:
   # Wait for at most 1 minute (6*10s) for the scheduler container to startup.
   # livenessProbe kicks in after the first successful startupProbe
   startupProbe:
-    failureThreshold: 6
+    failureThreshold: 10
     periodSeconds: 10
     timeoutSeconds: 20
     command: ~
@@ -892,7 +892,7 @@ scheduler:
     cpu: 1000m
     memory: 1Gi
    requests:
-    cpu: 200m
+    cpu: 500m
     memory: 256Mi
 
   # This setting tells kubernetes that its ok to evict
@@ -955,8 +955,8 @@ scheduler:
     retentionDays: 15
     resources:
      limits:
-      cpu: 1000m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
      requests:
       cpu: 100m
       memory: 128Mi
@@ -1076,10 +1076,10 @@ createUserJob:
   resources:
    limits:
     cpu: 1000m
-    memory: 256Mi
+    memory: 1Gi
    requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 1000m
+    memory: 1Gi
 
 # Airflow database migration job settings
 migrateDatabaseJob:
@@ -1138,10 +1138,10 @@ migrateDatabaseJob:
   resources:
    limits:
     cpu: 1000m
-    memory: 256Mi
+    memory: 1Gi
    requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 1000m
+    memory: 1Gi
 
   # Launch additional containers into database migration job
   extraContainers: []
@@ -1250,8 +1250,8 @@ _rpcServer:
 
   resources:
     limits:
-      cpu: 1000m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
     requests:
       cpu: 100m
       memory: 128Mi
@@ -1293,25 +1293,25 @@ webserver:
   #      - "foo.remote"
   allowPodLogReading: true
   livenessProbe:
-    initialDelaySeconds: 15
-    timeoutSeconds: 5
+    initialDelaySeconds: 60
+    timeoutSeconds: 20
     failureThreshold: 5
-    periodSeconds: 10
+    periodSeconds: 20
     scheme: HTTP
 
   readinessProbe:
-    initialDelaySeconds: 15
-    timeoutSeconds: 5
+    initialDelaySeconds: 60
+    timeoutSeconds: 20
     failureThreshold: 5
-    periodSeconds: 10
+    periodSeconds: 20
     scheme: HTTP
 
   # Wait for at most 1 minute (6*10s) for the webserver container to startup.
   # livenessProbe kicks in after the first successful startupProbe
   startupProbe:
-    timeoutSeconds: 20
-    failureThreshold: 6
-    periodSeconds: 10
+    timeoutSeconds: 30
+    failureThreshold: 10
+    periodSeconds: 30
     scheme: HTTP
 
   # Number of webservers
@@ -1381,7 +1381,7 @@ webserver:
       cpu: 1000m
       memory: 1Gi
     requests:
-      cpu: 200m
+      cpu: 500m
       memory: 512Mi
 
   # Create initial user.
@@ -1572,7 +1572,7 @@ triggerer:
     cpu: 1000m
     memory: 1Gi
    requests:
-    cpu: 200m
+    cpu: 500m
     memory: 256Mi
 
   # Grace period for triggerer to finish after SIGTERM is sent from kubernetes
@@ -1756,7 +1756,7 @@ dagProcessor:
 
   resources:
    limits:
-    cpu: 1000m
+    cpu: 300m
     memory: 256Mi
    requests:
     cpu: 100m
@@ -1884,8 +1884,8 @@ flower:
 
   resources:
     limits:
-      cpu: 1000m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
     requests:
       cpu: 100m
       memory: 128Mi
@@ -2027,10 +2027,10 @@ statsd:
   extraNetworkPolicies: []
   resources: 
     limits:
-      cpu: 1000m
+      cpu: 300m
       memory: 256Mi
     requests:
-      cpu: 100m
+      cpu: 200m
       memory: 128Mi
 
   service:
@@ -2208,8 +2208,8 @@ pgbouncer:
   metricsExporterSidecar:
     resources:
      limits:
-      cpu: 1000m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
      requests:
       cpu: 100m
       memory: 128Mi
@@ -2292,11 +2292,11 @@ redis:
 
   resources:
    limits:
-    cpu: 1000m
-    memory: 256Mi
+    cpu: 500m
+    memory: 384Mi
    requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 300m
+    memory: 256Mi
 
   # If set use as redis secret. Make sure to also set data.brokerUrlSecretName value.
   passwordSecretName: ~
@@ -2414,8 +2414,8 @@ cleanup:
 
   resources:
    limits:
-    cpu: 1000m
-    memory: 256Mi
+    cpu: 100m
+    memory: 128Mi
    requests:
     cpu: 100m
     memory: 128Mi
@@ -2698,10 +2698,10 @@ dags:
 
     resources:
      limits:
-      cpu: 1000m
+      cpu: 500m
       memory: 256Mi
      requests:
-      cpu: 100m
+      cpu: 200m
       memory: 128Mi
 
 logs:
