@@ -89,12 +89,16 @@ kubectl port-forward pods/airflow-webserver-88f9bf489-ld79f 8080:8080 -n airflow
 
 4. **Adicionar uma nova conexão no Airflow**:
    - Navegue para **Admin -> Connections**:
+
      ![Conexão Airflow](documentation/images/image-2.png)
 
+
 5. **Ativar a DAG**:
+
    ![Ativar DAG](documentation/images/image-6.png)
 
 6. **Verificar a execução da DAG (últimos 7 dias)**:
+
    ![Execução DAG](documentation/images/image-3.png)
 
 ### 7. Verificando os Dados Gravados no PostgreSQL
@@ -108,6 +112,7 @@ kubectl port-forward pods/postgres-0 5432:5432 -n postgres
 2. Abra o **DBeaver** (ou uma IDE similar) e crie uma nova conexão com o PostgreSQL:
    - **Usuário**: \`admin\`
    - **Senha**: \`admin\`
+
    ![Conexão PostgreSQL](documentation/images/image-4.png)
 
 3. Execute a consulta SQL para verificar os dados gravados:
@@ -119,12 +124,15 @@ LIMIT 1000;
 \`\`\`
 
 4. **Dados Gravados**:
+
    ![Dados Gravados](documentation/images/image-5.png)
 
 ### 8. Pipeline do Airflow
 
 - **Pipeline** (DAG do Airflow) responsável pela orquestração:
+
   ![Pipeline DAG](documentation/images/image-7.png)
+
 
 #### Passos da Pipeline:
 1. **Extração**: O **Spark** conecta-se ao **BigQuery** e lê os dados do dataset público de transações de Ethereum.
