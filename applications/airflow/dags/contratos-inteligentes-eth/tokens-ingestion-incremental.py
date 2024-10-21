@@ -36,7 +36,7 @@ spark_job = SparkKubernetesOperator(
     task_id=task_id,
     namespace=SPARK_NAMESPACE,  
     application_file="./manifests/tokens-ingestion-incremental.yaml",  
-    kubernetes_conn_id='k8s_cluster',
+    kubernetes_conn_id='local_k8s',
     dag=dag,
 )
 
@@ -45,7 +45,7 @@ spark_job_sensor = SparkKubernetesSensor(
     task_id=f'{task_id}_sensor',
     namespace=SPARK_NAMESPACE,
     application_name=f"{{{{ task_instance.xcom_pull(task_ids='{task_id}')['metadata']['name'] }}}}",
-    kubernetes_conn_id="k8s_cluster",
+    kubernetes_conn_id="local_k8s",
     attach_log=True,
     dag=dag
 )
