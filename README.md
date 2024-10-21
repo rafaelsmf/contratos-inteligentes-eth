@@ -43,6 +43,8 @@ terraform plan
 terraform apply
 ```
 
+Obs: verifique se será necessário aumentar/diminuir os recursos (memória e cpu)
+
 ### 4. Iniciar o Tunnel do Minikube
 Abra uma nova janela de terminal e execute o comando para iniciar o Minikube Tunnel:
 
@@ -61,47 +63,62 @@ terraform init
 terraform plan
 terraform apply
 ```
+Observação: Aguarde que todas as aplicações estejam executando para seguir para os próximos passos
 
-### 6. Port-forward com a instância do Postgres
-Execute o comando em um novo terminal
+#### Crie uma nova conexão no Airflow
+1. Em um terminal, execute o comando abaixo:
+```
+kubectl config set-context local-k8s
+```
+2. Faça port-forward no webserver do Airflow:
+```
+kubectl port-forward pods/airflow-webserver-88f9bf489-ld79f 8080:8080 -n airflow
+```
 
+3. Dados de Acesso
+- Login: admin
+- Password: admin
+
+4. Adicione uma nova conexão no Airflow
+- Admin -> Connections:
+
+![alt text](documentation/images/image-2.png)
+
+5. Ative a DAG:
+![alt text](documentation/images/image-6.png)
+
+6. Resultado da execução da DAG dos últimos 7 dias:
+![alt text](documentation/images/image-3.png)
+
+### 6. Verificando os dados escritos no Postgres
+1. Execute o comando em um novo terminal
 ```
 kubectl port-forward pods/postgres-0 5432:5432 -n postgres
 ```
 
-### 7. Acesse o webserver do Airflow
-#### Dados de Acesso
-- Login: admin
-- Password: admin
+2. Acesse o DBeaver ou outra IDE similar
 
-#### Crie uma nova conexão
-kubectl config set-cluster local-k8s --server=http://$(minikube ip --profile=local-k8s):8443 --insecure-skip-tls-verify=true
-1. optenha o endereço da API do Minikube
+3. Cria a conexão no banco Postgres
 ```
-minikube ip
+user: admin
+password: admin
 ```
-Exemplo:
-![alt text](image.png)
+![alt text](documentation/images/image-4.png)
 
-2. Adicionar a conexão no Airflow
-- Admin -> Connections:
+4. Execute uma consulta na tabela
+```
+select *
+from public.crypto_tokens
+limit 1000
+```
 
-
+5. Dados Escritos:
+![alt text](documentation/images/image-5.png)
 
 ### 6. Comentários
 
-# Acessos
-
--- acesso ao airflow
-admin
-admin
-
--- acesso ao jupyterhub
-jovyan
-admin
-
 # DAG do Airflow responsável pela orquestração
-![alt text](image-1.png)
+![alt text](documentation/images/image-7.png)
 
 1. Extração: O Spark conecta-se ao BigQuery e faz a leitura dos dados do dataset público de transações de Ethereum.
 2. Processamento: O Spark realiza o processamento, aplicando filtros baseados na data da execução (D-1) para realizar um processamento incremental.
@@ -110,18 +127,10 @@ admin
 # Desafios Encontrados
 
 1. Configuração do Spark Operator
-- A configuração inicial do Spark Operator no Minikube apresentou desafios, principalmente ao lidar com incompatibilidades na versão do jar do conector do BigQuery. Utilizando o Pyspark notebook, foi possível validar a lógica da DAG no Airflow e assegurar a execução correta do script.
+- A configuração inicial do Spark Operator no Minikube apresentou desafios, principalmente ao lidar com incompatibilidades na versão do jar do conector do BigQuery. Para sanar esse problema, criei uma nova imagem do spark adicionando as dependências diretamente na pasta de jars.
 2. Autenticação com o BigQuery
 - As credenciais de autenticação foram armazenadas como secrets no Kubernetes, garantindo segurança e fácil integração com o BigQuery.
 3. Orquestração com Airflow
 - O Airflow foi configurado com Git-Sync para garantir a sincronização contínua das DAGs diretamente do GitHub.
 4. Gravação no PostgreSQL
-- Para definir corretamente o IP de conexão ao banco de dados PostgreSQL, utilize o comando:
-```bash
-kubectl get svc -n postgres
-```
-- Exemplo de IP de conexão: postgresql://10.109.6.155:5432/crypto_ethereum
-![alt text](image-2.png)
-
-- Amostra de dados salvos no Postgres:
-![alt text](image-3.png)
+- Foi possível validar o processo ponta a ponta desde a coleta, processamento e escrita no Postgres.
