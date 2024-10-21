@@ -59,3 +59,4 @@ infrastructure/k8s/.terraform.tfstate.lock.info
 applications/airflow/.helmignore
 applications/airflow/charts/postgresql/.helmignore
 applications/airflow/charts/postgresql/charts/common/.helmignore
+config

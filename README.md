@@ -62,7 +62,31 @@ terraform plan
 terraform apply
 ```
 
-# kubectl port-forward pods/postgres-0 5432:5432 -n postgres
+### 6. Port-forward com a instância do Postgres
+Execute o comando em um novo terminal
+
+```
+kubectl port-forward pods/postgres-0 5432:5432 -n postgres
+```
+
+### 7. Acesse o webserver do Airflow
+#### Dados de Acesso
+- Login: admin
+- Password: admin
+
+#### Crie uma nova conexão
+kubectl config set-cluster local-k8s --server=http://$(minikube ip --profile=local-k8s):8443 --insecure-skip-tls-verify=true
+1. optenha o endereço da API do Minikube
+```
+minikube ip
+```
+Exemplo:
+![alt text](image.png)
+
+2. Adicionar a conexão no Airflow
+- Admin -> Connections:
+
+
 
 ### 6. Comentários
 
